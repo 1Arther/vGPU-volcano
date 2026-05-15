@@ -1,0 +1,8 @@
+_output/
+bin/
+*.log
+*.tmp
+*.out
+.DS_Store
+.idea/
+.vscode/
