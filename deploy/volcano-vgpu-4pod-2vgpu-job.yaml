@@ -1,0 +1,28 @@
+apiVersion: batch.volcano.sh/v1alpha1
+kind: Job
+metadata:
+  name: volcano-vgpu-4pod-2vgpu-resource-only
+spec:
+  schedulerName: volcano
+  minAvailable: 4
+  tasks:
+    - name: worker
+      replicas: 4
+      template:
+        spec:
+          runtimeClassName: nvidia
+          restartPolicy: Never
+          containers:
+            - name: hold-resource
+              image: busybox:1.36
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  echo "2-vGPU resource allocated; no GPU workload is executed"
+                  sleep 3600
+              resources:
+                limits:
+                  volcano.sh/vgpu-number: 2
+                  volcano.sh/vgpu-memory: 8192
+                  volcano.sh/vgpu-cores: 25

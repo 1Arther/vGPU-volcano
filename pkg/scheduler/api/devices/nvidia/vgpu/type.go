@@ -65,7 +65,7 @@ var (
 	GPUSelectPolicy = OriginalPolicy
 
 	// R5300 DQN gRPC service
-	DQNGRPCEndpoint = "172.16.20.32:50051"
+	DQNGRPCEndpoint = "dqn-scheduler-grpc.volcano-system.svc.cluster.local:50051"
 )
 
 type ContainerDeviceRequest struct {

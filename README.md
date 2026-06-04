@@ -334,3 +334,15 @@ kubectl logs -n volcano-system deploy/volcano-scheduler \
 fallback=false reason=dqn
 
 说明 DQN 推理链路已经生效。
+## Kubernetes gRPC Deployment Update
+
+The DQN inference service can run inside the cluster as a normal Pod/Deployment. The scheduler should use this endpoint:
+
+```yaml
+deviceshare.GPUSelectPolicy: dqn
+deviceshare.DQNGRPCEndpoint: dqn-scheduler-grpc.volcano-system.svc.cluster.local:50051
+```
+
+Resource-only test manifests are under `deploy/`. They request vGPU resources and sleep, so they verify scheduling/allocation without running a real GPU workload.
+
+Because this repository only contains the modified Volcano scheduler files, use `hack/patch_full_volcano_and_build_scheduler.sh` to overlay these changes onto a full Volcano v1.13.1 checkout before rebuilding the `vc-scheduler` image.

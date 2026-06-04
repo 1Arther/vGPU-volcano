@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volcano-vgpu-resource-only-test
+spec:
+  runtimeClassName: nvidia
+  schedulerName: volcano
+  restartPolicy: Never
+  containers:
+    - name: hold-resource
+      image: busybox:1.36
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "vgpu resource allocated; no GPU workload is executed"
+          sleep 3600
+      resources:
+        limits:
+          volcano.sh/vgpu-number: 1
+          volcano.sh/vgpu-memory: 4096
+          volcano.sh/vgpu-cores: 10
