@@ -44,6 +44,7 @@ const (
 	SpreadPolicy   = "spread"
 	RandomPolicy   = "random"
 	DQNPolicy      = "dqn"
+	DQNJobPolicy   = "dqn-job"
 
 	// Keep old internal aliases for existing node scoring logic.
 	binpackPolicy = BinpackPolicy

@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cmp-vgpu-multi-4x2-0
+  namespace: default
+  labels:
+    experiment: cmp-vgpu
+spec:
+  runtimeClassName: nvidia
+  schedulerName: volcano
+  nodeSelector:
+    kubernetes.io/hostname: t3dgq
+  restartPolicy: Never
+  containers:
+    - name: hold-resource
+      image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash", "-lc"]
+      args:
+        - |
+          echo "resource allocated; no GPU workload is executed"
+          sleep 600
+      resources:
+        limits:
+          volcano.sh/vgpu-number: 2
+          volcano.sh/vgpu-memory: 8192
+          volcano.sh/vgpu-cores: 25
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cmp-vgpu-multi-4x2-1
+  namespace: default
+  labels:
+    experiment: cmp-vgpu
+spec:
+  runtimeClassName: nvidia
+  schedulerName: volcano
+  nodeSelector:
+    kubernetes.io/hostname: t3dgq
+  restartPolicy: Never
+  containers:
+    - name: hold-resource
+      image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash", "-lc"]
+      args:
+        - |
+          echo "resource allocated; no GPU workload is executed"
+          sleep 600
+      resources:
+        limits:
+          volcano.sh/vgpu-number: 2
+          volcano.sh/vgpu-memory: 8192
+          volcano.sh/vgpu-cores: 25
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cmp-vgpu-multi-4x2-2
+  namespace: default
+  labels:
+    experiment: cmp-vgpu
+spec:
+  runtimeClassName: nvidia
+  schedulerName: volcano
+  nodeSelector:
+    kubernetes.io/hostname: t3dgq
+  restartPolicy: Never
+  containers:
+    - name: hold-resource
+      image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash", "-lc"]
+      args:
+        - |
+          echo "resource allocated; no GPU workload is executed"
+          sleep 600
+      resources:
+        limits:
+          volcano.sh/vgpu-number: 2
+          volcano.sh/vgpu-memory: 8192
+          volcano.sh/vgpu-cores: 25
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cmp-vgpu-multi-4x2-3
+  namespace: default
+  labels:
+    experiment: cmp-vgpu
+spec:
+  runtimeClassName: nvidia
+  schedulerName: volcano
+  nodeSelector:
+    kubernetes.io/hostname: t3dgq
+  restartPolicy: Never
+  containers:
+    - name: hold-resource
+      image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash", "-lc"]
+      args:
+        - |
+          echo "resource allocated; no GPU workload is executed"
+          sleep 600
+      resources:
+        limits:
+          volcano.sh/vgpu-number: 2
+          volcano.sh/vgpu-memory: 8192
+          volcano.sh/vgpu-cores: 25
+---

@@ -555,7 +555,7 @@ func getSharingMode(mode string) string {
 
 func normalizeGPUSelectPolicy(policy string) string {
 	switch policy {
-	case OriginalPolicy, BinpackPolicy, SpreadPolicy, RandomPolicy, DQNPolicy:
+	case OriginalPolicy, BinpackPolicy, SpreadPolicy, RandomPolicy, DQNPolicy, DQNJobPolicy:
 		return policy
 	default:
 		return OriginalPolicy
@@ -601,6 +601,40 @@ func orderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDeviceRequest) 
 	}
 
 	policy := normalizeGPUSelectPolicy(GPUSelectPolicy)
+	if policy == DQNJobPolicy {
+		jobIndexes, err := queryDQNJobOrderedGPUIndexes(gs, pod, req)
+		if err == nil && len(jobIndexes) > 0 {
+			klog.Infof("GPUSelectPolicy=dqn-job reqMem=%d reqCore=%d ordered indexes=%v", req.Memreq, req.Coresreq, jobIndexes)
+
+			for _, idx := range jobIndexes {
+				g := gs.Device[idx]
+				klog.Infof(
+					"GPUSelectPolicy=dqn-job idx=%d id=%d uuid=%s fit=%v usedMem=%d totalMem=%d usedCore=%d usedNum=%d",
+					idx,
+					g.ID,
+					g.UUID,
+					canFitForOrder(g, req),
+					g.UsedMem,
+					g.Memory,
+					g.UsedCore,
+					g.UsedNum,
+				)
+			}
+
+			return jobIndexes
+		}
+
+		klog.Warningf(
+			"GPUSelectPolicy=dqn-job failed for pod %s/%s on node %s: %v, fallback to dqn",
+			pod.Namespace,
+			pod.Name,
+			gs.Name,
+			err,
+		)
+
+		policy = DQNPolicy
+	}
+
 	if policy == DQNPolicy {
 		dqnIndexes, err := queryDQNOrderedGPUIndexes(gs, pod, req)
 		if err == nil && len(dqnIndexes) > 0 {
