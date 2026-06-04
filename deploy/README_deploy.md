@@ -36,3 +36,5 @@ kubectl apply -f deploy/volcano-vgpu-4pod-2vgpu-job.yaml
 ```
 
 On 10.33, `kubectl` currently has no kubeconfig and falls back to `localhost:8080`. Copy a valid kubeconfig to `/home/zbs/.kube/config` or set `KUBECONFIG` before applying the manifests.
+
+The resource-only manifests use `nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04` and only run `sleep`. `busybox` is intentionally avoided because the NVIDIA runtime injection can fail against its minimal libc layout. The manifests use `nodeSelector` rather than `nodeName`; setting `nodeName` bypasses Volcano binding and can make the vGPU device plugin reject the Pod with `device request not found`.

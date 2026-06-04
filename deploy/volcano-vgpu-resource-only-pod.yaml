@@ -5,12 +5,14 @@ metadata:
 spec:
   runtimeClassName: nvidia
   schedulerName: volcano
+  nodeSelector:
+    kubernetes.io/hostname: t3dgq
   restartPolicy: Never
   containers:
     - name: hold-resource
-      image: busybox:1.36
+      image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
       imagePullPolicy: IfNotPresent
-      command: ["/bin/sh", "-c"]
+      command: ["/bin/bash", "-lc"]
       args:
         - |
           echo "vgpu resource allocated; no GPU workload is executed"
