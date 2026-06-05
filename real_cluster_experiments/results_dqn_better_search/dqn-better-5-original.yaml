@@ -1,0 +1,60 @@
+apiVersion: batch.volcano.sh/v1alpha1
+kind: Job
+metadata:
+  name: dqn-better-5-original
+spec:
+  schedulerName: volcano
+  minAvailable: 6
+  tasks:
+    - name: memhi-0
+      replicas: 3
+      template:
+        metadata:
+          labels:
+            experiment: dqn-better
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+            - name: hold-resource
+              image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/bash", "-lc"]
+              args:
+                - |
+                  echo "resource allocated; no GPU workload is executed"
+                  sleep 480
+              resources:
+                limits:
+                  volcano.sh/vgpu-number: 1
+                  volcano.sh/vgpu-memory: 8000
+                  volcano.sh/vgpu-cores: 10
+    - name: corehi-1
+      replicas: 3
+      template:
+        metadata:
+          labels:
+            experiment: dqn-better
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+            - name: hold-resource
+              image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/bash", "-lc"]
+              args:
+                - |
+                  echo "resource allocated; no GPU workload is executed"
+                  sleep 480
+              resources:
+                limits:
+                  volcano.sh/vgpu-number: 1
+                  volcano.sh/vgpu-memory: 4000
+                  volcano.sh/vgpu-cores: 35

@@ -1,0 +1,134 @@
+[
+  0.0,
+  0,
+  [
+    [
+      "memhi",
+      2,
+      1,
+      8000,
+      10
+    ],
+    [
+      "corehi",
+      2,
+      1,
+      4000,
+      35
+    ],
+    [
+      "normal",
+      4,
+      1,
+      4000,
+      15
+    ]
+  ],
+  {
+    "running": 8,
+    "allocated": 8,
+    "used_gpus": 4,
+    "mem_range": 4000.0,
+    "core_range": 25.0,
+    "slice_range": 0,
+    "intra_gap": 0.20641996417521577,
+    "balance_score": 0.6192598925256473,
+    "gpu_usage": "{\"GPU-27be0024-0498-4114-e6b9-b2d0db148309\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}, \"GPU-28cf7186-0bdd-be9f-92e5-3c59b4e92c1e\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}, \"GPU-7b94f673-ce00-719b-2c94-706baa032dae\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}, \"GPU-fb6aaeaf-9ca4-3c9a-7b3b-f56714c1f7cd\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}}",
+    "case_id": 0,
+    "policy": "dqn-job",
+    "expected": 8,
+    "specs": "[[\"memhi\", 2, 1, 8000, 10], [\"corehi\", 2, 1, 4000, 35], [\"normal\", 4, 1, 4000, 15]]"
+  },
+  {
+    "running": 8,
+    "allocated": 8,
+    "used_gpus": 4,
+    "mem_range": 4000.0,
+    "core_range": 25.0,
+    "slice_range": 0,
+    "intra_gap": 0.20641996417521577,
+    "balance_score": 0.6192598925256473,
+    "gpu_usage": "{\"GPU-27be0024-0498-4114-e6b9-b2d0db148309\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}, \"GPU-28cf7186-0bdd-be9f-92e5-3c59b4e92c1e\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}, \"GPU-7b94f673-ce00-719b-2c94-706baa032dae\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}, \"GPU-fb6aaeaf-9ca4-3c9a-7b3b-f56714c1f7cd\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}}",
+    "case_id": 0,
+    "policy": "spread",
+    "expected": 8,
+    "specs": "[[\"memhi\", 2, 1, 8000, 10], [\"corehi\", 2, 1, 4000, 35], [\"normal\", 4, 1, 4000, 15]]"
+  },
+  [
+    {
+      "running": 8,
+      "allocated": 8,
+      "used_gpus": 4,
+      "mem_range": 4000.0,
+      "core_range": 25.0,
+      "slice_range": 0,
+      "intra_gap": 0.20641996417521577,
+      "balance_score": 0.6192598925256473,
+      "gpu_usage": "{\"GPU-27be0024-0498-4114-e6b9-b2d0db148309\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}, \"GPU-28cf7186-0bdd-be9f-92e5-3c59b4e92c1e\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}, \"GPU-7b94f673-ce00-719b-2c94-706baa032dae\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}, \"GPU-fb6aaeaf-9ca4-3c9a-7b3b-f56714c1f7cd\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}}",
+      "case_id": 0,
+      "policy": "spread",
+      "expected": 8,
+      "specs": "[[\"memhi\", 2, 1, 8000, 10], [\"corehi\", 2, 1, 4000, 35], [\"normal\", 4, 1, 4000, 15]]"
+    },
+    {
+      "running": 8,
+      "allocated": 8,
+      "used_gpus": 2,
+      "mem_range": 20000.0,
+      "core_range": 95.0,
+      "slice_range": 4,
+      "intra_gap": 0.19999999999999996,
+      "balance_score": 1.9641996417521577,
+      "gpu_usage": "{\"GPU-27be0024-0498-4114-e6b9-b2d0db148309\": {\"core\": 95.0, \"mem\": 20000.0, \"slices\": 4}, \"GPU-28cf7186-0bdd-be9f-92e5-3c59b4e92c1e\": {\"core\": 55.0, \"mem\": 20000.0, \"slices\": 4}}",
+      "case_id": 0,
+      "policy": "binpack",
+      "expected": 8,
+      "specs": "[[\"memhi\", 2, 1, 8000, 10], [\"corehi\", 2, 1, 4000, 35], [\"normal\", 4, 1, 4000, 15]]"
+    },
+    {
+      "running": 8,
+      "allocated": 8,
+      "used_gpus": 2,
+      "mem_range": 24000.0,
+      "core_range": 90.0,
+      "slice_range": 5,
+      "intra_gap": 0.06419964175215759,
+      "balance_score": 1.9412392118547466,
+      "gpu_usage": "{\"GPU-27be0024-0498-4114-e6b9-b2d0db148309\": {\"core\": 90.0, \"mem\": 24000.0, \"slices\": 5}, \"GPU-28cf7186-0bdd-be9f-92e5-3c59b4e92c1e\": {\"core\": 60.0, \"mem\": 16000.0, \"slices\": 3}}",
+      "case_id": 0,
+      "policy": "original",
+      "expected": 8,
+      "specs": "[[\"memhi\", 2, 1, 8000, 10], [\"corehi\", 2, 1, 4000, 35], [\"normal\", 4, 1, 4000, 15]]"
+    },
+    {
+      "running": 8,
+      "allocated": 8,
+      "used_gpus": 4,
+      "mem_range": 16000.0,
+      "core_range": 40.0,
+      "slice_range": 3,
+      "intra_gap": 0.12567985670086304,
+      "balance_score": 1.177039570102589,
+      "gpu_usage": "{\"GPU-27be0024-0498-4114-e6b9-b2d0db148309\": {\"core\": 45.0, \"mem\": 12000.0, \"slices\": 2}, \"GPU-28cf7186-0bdd-be9f-92e5-3c59b4e92c1e\": {\"core\": 15.0, \"mem\": 4000.0, \"slices\": 1}, \"GPU-7b94f673-ce00-719b-2c94-706baa032dae\": {\"core\": 55.0, \"mem\": 20000.0, \"slices\": 4}, \"GPU-fb6aaeaf-9ca4-3c9a-7b3b-f56714c1f7cd\": {\"core\": 35.0, \"mem\": 4000.0, \"slices\": 1}}",
+      "case_id": 0,
+      "policy": "random",
+      "expected": 8,
+      "specs": "[[\"memhi\", 2, 1, 8000, 10], [\"corehi\", 2, 1, 4000, 35], [\"normal\", 4, 1, 4000, 15]]"
+    },
+    {
+      "running": 8,
+      "allocated": 8,
+      "used_gpus": 4,
+      "mem_range": 4000.0,
+      "core_range": 25.0,
+      "slice_range": 0,
+      "intra_gap": 0.20641996417521577,
+      "balance_score": 0.6192598925256473,
+      "gpu_usage": "{\"GPU-27be0024-0498-4114-e6b9-b2d0db148309\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}, \"GPU-28cf7186-0bdd-be9f-92e5-3c59b4e92c1e\": {\"core\": 25.0, \"mem\": 12000.0, \"slices\": 2}, \"GPU-7b94f673-ce00-719b-2c94-706baa032dae\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}, \"GPU-fb6aaeaf-9ca4-3c9a-7b3b-f56714c1f7cd\": {\"core\": 50.0, \"mem\": 8000.0, \"slices\": 2}}",
+      "case_id": 0,
+      "policy": "dqn-job",
+      "expected": 8,
+      "specs": "[[\"memhi\", 2, 1, 8000, 10], [\"corehi\", 2, 1, 4000, 35], [\"normal\", 4, 1, 4000, 15]]"
+    }
+  ]
+]

@@ -1,0 +1,80 @@
+apiVersion: batch.volcano.sh/v1alpha1
+kind: Job
+metadata:
+  name: normal-preload-target
+spec:
+  schedulerName: volcano
+  minAvailable: 7
+  tasks:
+    - name: pair-0
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            experiment: normal-preload
+            role: target
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo target; sleep 600"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 2
+                volcano.sh/vgpu-memory: 4000
+                volcano.sh/vgpu-cores: 15
+    - name: corehi-1
+      replicas: 3
+      template:
+        metadata:
+          labels:
+            experiment: normal-preload
+            role: target
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo target; sleep 600"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 4000
+                volcano.sh/vgpu-cores: 35
+    - name: normal-2
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            experiment: normal-preload
+            role: target
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo target; sleep 600"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 4000
+                volcano.sh/vgpu-cores: 15
