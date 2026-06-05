@@ -1,0 +1,60 @@
+apiVersion: batch.volcano.sh/v1alpha1
+kind: Job
+metadata:
+  name: caseb-repeat-target
+spec:
+  schedulerName: volcano
+  minAvailable: 6
+  tasks:
+    - name: memhi-0
+      replicas: 3
+      template:
+        metadata:
+          labels:
+            experiment: caseb-repeat
+            role: target
+            repeat: "4"
+            policy: dqn-job
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo target; sleep 420"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 8000
+                volcano.sh/vgpu-cores: 10
+    - name: corehi-1
+      replicas: 3
+      template:
+        metadata:
+          labels:
+            experiment: caseb-repeat
+            role: target
+            repeat: "4"
+            policy: dqn-job
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo target; sleep 420"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 4000
+                volcano.sh/vgpu-cores: 35

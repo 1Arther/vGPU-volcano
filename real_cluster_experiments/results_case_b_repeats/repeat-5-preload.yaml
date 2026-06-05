@@ -1,0 +1,108 @@
+apiVersion: batch.volcano.sh/v1alpha1
+kind: Job
+metadata:
+  name: caseb-repeat-preload
+spec:
+  schedulerName: volcano
+  minAvailable: 4
+  tasks:
+    - name: pre-mem-0
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            experiment: caseb-repeat
+            role: preload
+            repeat: "5"
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo preload; sleep 420"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 12000
+                volcano.sh/vgpu-cores: 10
+    - name: pre-core-1
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            experiment: caseb-repeat
+            role: preload
+            repeat: "5"
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo preload; sleep 420"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 8000
+                volcano.sh/vgpu-cores: 65
+    - name: pre-small-2
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            experiment: caseb-repeat
+            role: preload
+            repeat: "5"
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo preload; sleep 420"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 4000
+                volcano.sh/vgpu-cores: 20
+    - name: pre-mix-3
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            experiment: caseb-repeat
+            role: preload
+            repeat: "5"
+        spec:
+          runtimeClassName: nvidia
+          schedulerName: volcano
+          nodeSelector:
+            kubernetes.io/hostname: t3dgq
+          restartPolicy: Never
+          containers:
+          - name: hold
+            image: nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/bash", "-lc"]
+            args: ["echo preload; sleep 420"]
+            resources:
+              limits:
+                volcano.sh/vgpu-number: 1
+                volcano.sh/vgpu-memory: 12000
+                volcano.sh/vgpu-cores: 50
