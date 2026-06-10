@@ -38,6 +38,10 @@ type dqnJobCacheEntry struct {
 	allocations map[string][]int
 }
 
+func dqnDurationMs(d time.Duration) float64 {
+	return float64(d.Microseconds()) / 1000.0
+}
+
 func getDQNClient() (dqngrpc.DQNSchedulerClient, error) {
 	if DQNGRPCEndpoint == "" {
 		return nil, fmt.Errorf("empty DQNGRPCEndpoint")
@@ -119,6 +123,7 @@ func gpuStatesForDQN(gs *GPUDevices) []*dqngrpc.GPUState {
 }
 
 func queryDQNOrderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDeviceRequest) ([]int, error) {
+	totalStart := time.Now()
 	client, err := getDQNClient()
 	if err != nil {
 		return nil, err
@@ -133,20 +138,39 @@ func queryDQNOrderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDeviceR
 		Nums:         req.Nums,
 		Gpus:         gpuStatesForDQN(gs),
 	}
+	requestBuildMS := dqnDurationMs(time.Since(totalStart))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	rpcStart := time.Now()
 	resp, err := client.Predict(ctx, rpcReq)
+	rpcMS := dqnDurationMs(time.Since(rpcStart))
 	if err != nil {
 		resetDQNClient()
 		return nil, fmt.Errorf("dqn predict failed: %w", err)
 	}
 
+	processStart := time.Now()
 	indexes := sanitizeDQNIndexes(resp.OrderedIndexes, gs)
 	if len(indexes) == 0 {
 		return nil, fmt.Errorf("dqn returned empty ordered indexes, fallback=%v, reason=%s", resp.Fallback, resp.Reason)
 	}
+	processMS := dqnDurationMs(time.Since(processStart))
+	totalMS := dqnDurationMs(time.Since(totalStart))
+	klog.Infof(
+		"DQNOverhead policy=dqn method=Predict total_ms=%.3f rpc_ms=%.3f request_build_ms=%.3f process_ms=%.3f scheduler_side_ms=%.3f pod=%s/%s node=%s gpus=%d fallback=%v",
+		totalMS,
+		rpcMS,
+		requestBuildMS,
+		processMS,
+		totalMS-rpcMS,
+		pod.Namespace,
+		pod.Name,
+		gs.Name,
+		len(rpcReq.Gpus),
+		resp.Fallback,
+	)
 
 	klog.Infof(
 		"DQNPolicy grpc endpoint=%s pod=%s/%s selected=%d ordered=%v fallback=%v reason=%s",
@@ -302,6 +326,7 @@ func reorderDQNPreferredIndexes(preferred []int, gs *GPUDevices) []int {
 }
 
 func queryDQNJobOrderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDeviceRequest) ([]int, error) {
+	totalStart := time.Now()
 	jobKey := dqnPodGroupKey(pod)
 	podKey := pod.Namespace + "/" + pod.Name
 	cacheKey := DQNGRPCEndpoint + "|" + gs.Name + "|" + jobKey
@@ -310,6 +335,13 @@ func queryDQNJobOrderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDevi
 	if cached, ok := dqnJobCache[cacheKey]; ok && time.Since(cached.created) < 10*time.Second {
 		if preferred, ok := cached.allocations[podKey]; ok && len(preferred) > 0 {
 			dqnJobCacheMu.Unlock()
+			klog.Infof(
+				"DQNOverhead policy=dqn-job path=cache total_ms=%.3f job=%s pod=%s node=%s",
+				dqnDurationMs(time.Since(totalStart)),
+				jobKey,
+				podKey,
+				gs.Name,
+			)
 			return reorderDQNPreferredIndexes(preferred, gs), nil
 		}
 	}
@@ -323,7 +355,9 @@ func queryDQNJobOrderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDevi
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	listStart := time.Now()
 	pods, err := listDQNJobPods(ctx, pod)
+	listPodsMS := dqnDurationMs(time.Since(listStart))
 	if err != nil {
 		return nil, err
 	}
@@ -345,13 +379,17 @@ func queryDQNJobOrderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDevi
 		Gpus:     gpuStatesForDQN(gs),
 		Pods:     podReqs,
 	}
+	requestBuildMS := dqnDurationMs(time.Since(totalStart)) - listPodsMS
 
+	rpcStart := time.Now()
 	resp, err := client.ScheduleJob(ctx, rpcReq)
+	rpcMS := dqnDurationMs(time.Since(rpcStart))
 	if err != nil {
 		resetDQNClient()
 		return nil, fmt.Errorf("dqn schedule job failed: %w", err)
 	}
 
+	processStart := time.Now()
 	allocations := map[string][]int{}
 	for _, alloc := range resp.Allocations {
 		key := alloc.PodNamespace + "/" + alloc.PodName
@@ -388,6 +426,24 @@ func queryDQNJobOrderedGPUIndexes(gs *GPUDevices, pod *v1.Pod, req ContainerDevi
 		sort.Strings(known)
 		return nil, fmt.Errorf("dqn schedule job has no allocation for pod %s, known=%s", podKey, strings.Join(known, ","))
 	}
+
+	processMS := dqnDurationMs(time.Since(processStart))
+	totalMS := dqnDurationMs(time.Since(totalStart))
+	klog.Infof(
+		"DQNOverhead policy=dqn-job method=ScheduleJob total_ms=%.3f rpc_ms=%.3f list_pods_ms=%.3f request_build_ms=%.3f process_ms=%.3f scheduler_side_ms=%.3f job=%s pod=%s node=%s pods=%d gpus=%d fallback=%v",
+		totalMS,
+		rpcMS,
+		listPodsMS,
+		requestBuildMS,
+		processMS,
+		totalMS-rpcMS,
+		jobKey,
+		podKey,
+		gs.Name,
+		len(podReqs),
+		len(rpcReq.Gpus),
+		resp.Fallback,
+	)
 
 	klog.Infof(
 		"DQNJobPolicy grpc endpoint=%s job=%s pod=%s selected=%v fallback=%v reason=%s pods=%d",
